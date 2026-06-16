@@ -1,0 +1,13 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+body {
+  background: #F2ECDD;
+}
+#root {
+  /* respect notch / safe areas on installed mobile */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
