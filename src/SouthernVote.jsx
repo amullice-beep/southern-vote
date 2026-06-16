@@ -762,6 +762,7 @@ const CSS = `
   --ink-soft:#3C4356;
   --oxblood:#7E2A2A;
   --brass:#9A7B2E;
+  --star:#1E4FA3;
   --rule:#C9BFA6;
   --card:#FBF7EC;
 }
@@ -787,7 +788,7 @@ const CSS = `
 }
 .brand{display:flex;align-items:center;gap:14px;}
 .brand-mark{
-  font-size:34px;color:var(--oxblood);line-height:1;
+  font-size:34px;color:var(--star);line-height:1;
   transform:translateY(-2px);
 }
 .masthead h1{
