@@ -184,8 +184,8 @@ const STATES = {
     redistricting: {
       status: "attempted",
       label: "Redraw attempted, not enacted",
-      note: "Legislature took steps toward a GOP-friendly redraw after the Louisiana ruling, but a new congressional map was not enacted for 2026. Existing map remains in use.",
-      passed: "Not enacted (existing map in use)",
+      note: "A Trump-backed push to dismantle Rep. Clyburn's district after the Callais ruling failed in the GOP-led state Senate. No new map was enacted; the existing map remains in use for 2026.",
+      passed: "Rejected in Senate (existing map in use)",
       mapUrl: "https://redistricting.scsenate.gov/",
     },
     deadlines: [
@@ -205,10 +205,10 @@ const STATES = {
     officialsLookup: "https://www.sos.ms.gov/elections-voting/county-election-officials",
     pollHours: "7:00 AM – 7:00 PM CT",
     redistricting: {
-      status: "special",
-      label: "Special session held",
-      note: "Congressional primaries were held in March 2026; a May 2026 special session addressed redistricting matters. Confirm your district via the SOS portal.",
-      passed: "See SOS portal for current status",
+      status: "ineffect",
+      label: "Current map in effect",
+      note: "Mississippi uses its existing congressional map for 2026 — no new map was enacted. (Gov. Reeves canceled a May 2026 special session, which concerned judicial districts.) A Callais-driven congressional redraw is under study for a later cycle.",
+      passed: "Existing map in use for 2026",
       mapUrl: "https://www.sos.ms.gov/elections-voting/redistricting",
     },
     deadlines: [
@@ -227,10 +227,10 @@ const STATES = {
     officialsLookup: "https://dos.elections.myflorida.com/supervisors/",
     pollHours: "7:00 AM – 7:00 PM (local time)",
     redistricting: {
-      status: "voluntary",
-      label: "Voluntary redraw underway",
-      note: "Florida took official action toward voluntary mid-decade redistricting; verify your assigned district on the SOS portal before voting.",
-      passed: "Action underway — confirm on SOS portal",
+      status: "ineffect",
+      label: "New map in effect",
+      note: "Gov. DeSantis signed a new mid-decade congressional map on May 4, 2026, reworking 21 of 28 districts to add ~4 Republican-leaning seats (projected 24-4). The Florida Supreme Court declined to block it, so the map is in effect for 2026.",
+      passed: "May 2026 (signed); in effect for 2026",
       mapUrl: "https://www.floridaredistricting.gov/",
     },
     deadlines: [
