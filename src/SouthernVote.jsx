@@ -38,10 +38,10 @@ const STATES = {
     officialsLookup: "https://mvp.sos.ga.gov/s/",
     pollHours: "7:00 AM – 7:00 PM ET",
     redistricting: {
-      status: "litigation",
-      label: "Subject to litigation",
-      note: "Congressional map subject to change due to ongoing litigation as of Jan 2026. The 2023 court-revised map is in use pending resolution.",
-      passed: "Dec 2023 (court-ordered revision)",
+      status: "ineffect",
+      label: "Current map in effect",
+      note: "Gov. Kemp ruled out a pre-midterm redraw, so Georgia uses its 2023 court-ordered map for 2026. A new map is expected before 2028 in light of Louisiana v. Callais.",
+      passed: "Dec 2023 (court-ordered revision); in use for 2026",
       mapUrl: "https://www.legis.ga.gov/joint-office/reapportionment",
     },
     deadlines: [
@@ -135,10 +135,10 @@ const STATES = {
     officialsLookup: "https://www.sos.la.gov/ElectionsAndVoting/GetElectionInformation/FindYourRegistrarOfVoters/Pages/default.aspx",
     pollHours: "7:00 AM – 8:00 PM CT",
     redistricting: {
-      status: "litigation",
-      label: "Subject to litigation",
-      note: "Map at center of Louisiana v. Callais. An April 29, 2026 Supreme Court ruling partially overturned VRA Section 2 protections; the map's status remained contested.",
-      passed: "Jan 2024 (2nd majority-Black district); under SCOTUS review",
+      status: "ineffect",
+      label: "New map in effect",
+      note: "After the U.S. Supreme Court struck down Louisiana's two-majority-Black-district map in Louisiana v. Callais (April 29, 2026), Gov. Landry signed SB 121 dismantling the second majority-Black district. The new 5R-1D map — one majority-Black seat anchored in New Orleans — took effect immediately for the 2026 elections.",
+      passed: "May 2026 (SB 121, in effect for 2026)",
       mapUrl: "https://house.louisiana.gov/H_Redistricting2025/",
     },
     deadlines: [
@@ -159,10 +159,10 @@ const STATES = {
     officialsLookup: "https://www.sos.alabama.gov/alabama-votes/county-officials",
     pollHours: "7:00 AM – 7:00 PM CT",
     redistricting: {
-      status: "planned",
-      label: "New map planned, pending courts",
-      note: "Legislature passed a plan (May 2026) directing new primaries under a GOP-friendly map IF courts lift the injunction keeping the current map in place. Not yet in effect.",
-      passed: "May 2026 (contingent on court action)",
+      status: "ineffect",
+      label: "New map in effect",
+      note: "In June 2026 the U.S. Supreme Court let Alabama use its 2023 congressional map — one majority-Black district of seven — reversing a lower-court block in light of Louisiana v. Callais. The map is in effect for 2026; the primary was rescheduled to Aug 11, 2026.",
+      passed: "2023 map; allowed by SCOTUS June 2026",
       mapUrl: "https://www.legislature.state.al.us/aliswww/Redistricting.aspx",
     },
     deadlines: [
