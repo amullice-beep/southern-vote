@@ -253,6 +253,10 @@ const REDISTRICTING_STYLES = {
   special:    { dot: "var(--brass)",    tone: "Check portal" },
 };
 
+// Bump this whenever the redistricting / deadline data is re-checked against
+// official sources. Surfaced in the footer so users can judge its freshness.
+const DATA_LAST_VERIFIED = "June 2026";
+
 /* ----------------------------- HELPERS ----------------------------------- */
 // Haversine great-circle distance in miles.
 function haversineMiles(lat1, lon1, lat2, lon2) {
@@ -731,6 +735,9 @@ export default function SouthernVote() {
           screen links to the authoritative state source, which always governs.
           Not affiliated with any government agency.
         </p>
+        <p className="foot-verified">
+          Redistricting &amp; deadline data last verified: {DATA_LAST_VERIFIED}.
+        </p>
       </footer>
     </div>
   );
@@ -961,6 +968,7 @@ const CSS = `
 /* footer */
 .foot{margin:40px 20px 0;padding-top:16px;border-top:2px solid var(--ink);}
 .foot p{font-size:12px;color:var(--ink-soft);line-height:1.6;max-width:80ch;margin:0;}
+.foot-verified{margin-top:8px !important;font-style:italic;letter-spacing:.02em;}
 
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important;}
