@@ -257,6 +257,16 @@ const REDISTRICTING_STYLES = {
 // official sources. Surfaced in the footer so users can judge its freshness.
 const DATA_LAST_VERIFIED = "June 2026";
 
+// TurboVote: free email & text reminders for registration/absentee/Election-Day
+// deadlines. Sends users to TurboVote's sign-up. (Partners can swap in a branded
+// subdomain like https://southernvote.turbovote.org/ once registered with them.)
+const TURBOVOTE_URL = "https://turbovote.org/";
+
+// Optional donation link. Paste your donation page (ActBlue, Donorbox, PayPal,
+// GitHub Sponsors, etc.) here and a "Donate" button appears next to the
+// reminders button. Left empty, the Donate button is hidden.
+const DONATE_URL = "";
+
 /* ----------------------------- HELPERS ----------------------------------- */
 // Haversine great-circle distance in miles.
 function haversineMiles(lat1, lon1, lat2, lon2) {
@@ -1816,6 +1826,38 @@ export default function SouthernVote() {
         )}
       </main>
 
+      <section className="cta" aria-label="Stay election-ready">
+        <div className="cta-inner">
+          <div className="cta-text">
+            <h3>Never miss a deadline</h3>
+            <p>
+              Sign up with TurboVote for free email &amp; text reminders before
+              every registration, absentee, and Election Day cutoff in your state.
+            </p>
+          </div>
+          <div className="cta-actions">
+            <a
+              className="cta-btn cta-btn--primary"
+              href={TURBOVOTE_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Get election reminders ↗
+            </a>
+            {DONATE_URL && (
+              <a
+                className="cta-btn cta-btn--ghost"
+                href={DONATE_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Donate ♥
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
       <footer className="foot">
         <p>
           Built as a civic wayfinder. Deadlines, maps, and rules change — every
@@ -2066,6 +2108,29 @@ const CSS = `
 .abs-body{font-size:15px;line-height:1.65;margin:0 0 16px;color:var(--ink);}
 .contact-note{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);}
 .contact-line{margin:2px 0;font-size:14px;color:var(--ink);}
+
+/* reminder + donate call-to-action */
+.cta{margin:36px 20px 0;}
+.cta-inner{
+  display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--star);
+  padding:18px 20px;
+}
+.cta-text h3{
+  font-family:"Georgia","Times New Roman",serif;font-size:18px;color:var(--ink);
+  margin:0 0 4px;letter-spacing:0.01em;
+}
+.cta-text p{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0;max-width:62ch;}
+.cta-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.cta-btn{
+  appearance:none;cursor:pointer;text-decoration:none;white-space:nowrap;
+  font-family:"Georgia",serif;font-weight:700;font-size:14px;letter-spacing:0.03em;
+  padding:11px 18px;border:2px solid var(--star);transition:background .15s,color .15s;
+}
+.cta-btn--primary{background:var(--star);color:#fff;}
+.cta-btn--primary:hover{background:#163a7a;border-color:#163a7a;}
+.cta-btn--ghost{background:none;color:var(--star);}
+.cta-btn--ghost:hover{background:var(--star);color:#fff;}
 
 /* footer */
 .foot{margin:40px 20px 0;padding-top:16px;border-top:2px solid var(--ink);}
