@@ -174,7 +174,7 @@ const STATES = {
   SC: {
     name: "South Carolina",
     sos: "https://scvotes.gov/",
-    mvp: "https://info.scvotes.sc.gov/eng/voterinquiry/VoterInformationRequest.aspx",
+    mvp: "https://vrems.scvotes.sc.gov/Voter/Login?PageMode=PollingPlace",
     absenteeUrl: "https://scvotes.gov/voters/absentee-voting/",
     absentee: "Excuse required for absentee-by-mail. In-person early voting is available to all with no excuse.",
     dmvName: "South Carolina DMV",
