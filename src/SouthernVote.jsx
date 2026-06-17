@@ -1664,6 +1664,7 @@ const DMV_OFFICES = {
 function ReminderSignup({ stateName }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [hp, setHp] = useState(""); // honeypot — bots fill this, humans never see it
   const [status, setStatus] = useState("idle"); // idle|submitting|done|error
   const [err, setErr] = useState("");
   const configured = REMINDER_ENDPOINT.length > 0;
@@ -1671,6 +1672,7 @@ function ReminderSignup({ stateName }) {
   async function submit(e) {
     e.preventDefault();
     if (!configured) return;
+    if (hp) return; // silently drop bot submissions
     if (!email.trim() && !phone.trim()) {
       setErr("Enter an email or mobile number.");
       return;
@@ -1681,7 +1683,14 @@ function ReminderSignup({ stateName }) {
       const res = await fetch(REMINDER_ENDPOINT, {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ email, phone, state: stateName, source: "southern-vote" }),
+        body: JSON.stringify({
+          email,
+          phone,
+          state: stateName,
+          source: "southern-vote",
+          _subject: `New Southern Vote reminder sign-up (${stateName})`,
+          _gotcha: hp,
+        }),
       });
       if (res.ok) {
         setStatus("done");
@@ -1705,6 +1714,17 @@ function ReminderSignup({ stateName }) {
 
   return (
     <form className="signup" onSubmit={submit}>
+      {/* honeypot: hidden from people, tempting to bots */}
+      <input
+        type="text"
+        name="_gotcha"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+        value={hp}
+        onChange={(e) => setHp(e.target.value)}
+      />
       <div className="signup-fields">
         <input
           type="email"

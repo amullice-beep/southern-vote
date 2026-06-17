@@ -63,6 +63,29 @@ Because `registerType` is `autoUpdate`, when you redeploy a new build, installed
 users get the update automatically the next time they open the app. Handy for
 pushing a corrected deadline right before a registration cutoff.
 
+## Reminder sign-ups (email/text)
+
+The "Never miss a deadline" card has a built-in sign-up form. It's **inactive
+until you give it a form backend** — the app is a static site, so it can't store
+sign-ups or send messages by itself.
+
+**Quick free setup (email, ~2 minutes) with Formspree:**
+
+1. Create a free account at [formspree.io](https://formspree.io) and add a new form.
+2. Copy its endpoint (looks like `https://formspree.io/f/abcxyz`).
+3. Paste it into `REMINDER_ENDPOINT` near the top of `src/SouthernVote.jsx`,
+   then `npm run build` and redeploy.
+
+Now every sign-up is emailed to you (and stored in your Formspree dashboard).
+The form posts JSON `{ email, phone, state }` plus a spam honeypot. Formspree is
+used because its endpoint is safe to expose in client-side code — never put a
+Mailchimp/Twilio API key in the app.
+
+**Sending the reminders:** Formspree collects sign-ups; to actually send the
+emails, export/forward them to a mailing tool (Buttondown, Mailchimp) and send a
+short reminder before each deadline. **Text (SMS)** reminders need a paid sender
+(Twilio) plus a small serverless function + scheduler — not included here.
+
 ## Project layout
 
 ```
