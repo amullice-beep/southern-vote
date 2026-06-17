@@ -262,7 +262,7 @@ const DATA_LAST_VERIFIED = "June 2026";
 // (https://formspree.io/f/xxxxxxx), a Mailchimp/Buttondown hosted endpoint, or
 // your own serverless function. The form POSTs JSON {email, phone, state}.
 // Left empty, the form shows a "sign-ups opening soon" note and won't submit.
-const REMINDER_ENDPOINT = "";
+const REMINDER_ENDPOINT = "https://formspree.io/f/mqeoonob";
 
 // Optional donation link. Paste your donation page (ActBlue, Donorbox, PayPal,
 // GitHub Sponsors, etc.) here and a "Donate" button appears in the sign-up card.
