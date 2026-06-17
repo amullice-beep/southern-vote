@@ -257,14 +257,16 @@ const REDISTRICTING_STYLES = {
 // official sources. Surfaced in the footer so users can judge its freshness.
 const DATA_LAST_VERIFIED = "June 2026";
 
-// TurboVote: free email & text reminders for registration/absentee/Election-Day
-// deadlines. Sends users to TurboVote's sign-up. (Partners can swap in a branded
-// subdomain like https://southernvote.turbovote.org/ once registered with them.)
-const TURBOVOTE_URL = "https://turbovote.org/";
+// Southern Vote's own reminder sign-up. Paste a form-backend endpoint here to
+// start collecting email/text reminder sign-ups — e.g. a free Formspree form
+// (https://formspree.io/f/xxxxxxx), a Mailchimp/Buttondown hosted endpoint, or
+// your own serverless function. The form POSTs JSON {email, phone, state}.
+// Left empty, the form shows a "sign-ups opening soon" note and won't submit.
+const REMINDER_ENDPOINT = "";
 
 // Optional donation link. Paste your donation page (ActBlue, Donorbox, PayPal,
-// GitHub Sponsors, etc.) here and a "Donate" button appears next to the
-// reminders button. Left empty, the Donate button is hidden.
+// GitHub Sponsors, etc.) here and a "Donate" button appears in the sign-up card.
+// Left empty, the Donate button is hidden.
 const DONATE_URL = "";
 
 /* ----------------------------- HELPERS ----------------------------------- */
@@ -1656,6 +1658,89 @@ const DMV_OFFICES = {
   ],
 };
 
+/* Southern Vote's own email/text reminder sign-up. POSTs to REMINDER_ENDPOINT
+   (a form backend). Replaces the previous TurboVote hand-off so sign-ups belong
+   to Southern Vote. Sending the reminders is handled by the backing service. */
+function ReminderSignup({ stateName }) {
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState("idle"); // idle|submitting|done|error
+  const [err, setErr] = useState("");
+  const configured = REMINDER_ENDPOINT.length > 0;
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!configured) return;
+    if (!email.trim() && !phone.trim()) {
+      setErr("Enter an email or mobile number.");
+      return;
+    }
+    setStatus("submitting");
+    setErr("");
+    try {
+      const res = await fetch(REMINDER_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ email, phone, state: stateName, source: "southern-vote" }),
+      });
+      if (res.ok) {
+        setStatus("done");
+      } else {
+        setStatus("error");
+        setErr("Couldn't sign you up just now. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErr("Network error — please try again.");
+    }
+  }
+
+  if (status === "done") {
+    return (
+      <p className="signup-done">
+        ✓ You're signed up. Southern Vote will remind you before each deadline in {stateName}.
+      </p>
+    );
+  }
+
+  return (
+    <form className="signup" onSubmit={submit}>
+      <div className="signup-fields">
+        <input
+          type="email"
+          className="signup-input"
+          placeholder="you@email.com"
+          value={email}
+          autoComplete="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="tel"
+          className="signup-input"
+          placeholder="Mobile for texts (optional)"
+          value={phone}
+          autoComplete="tel"
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <button
+          className="cta-btn cta-btn--primary"
+          type="submit"
+          disabled={!configured || status === "submitting"}
+        >
+          {status === "submitting" ? "Signing up…" : "Get reminders"}
+        </button>
+      </div>
+      {err && <p className="msg msg-err">{err}</p>}
+      {!configured && <p className="signup-note">Reminder sign-ups open soon.</p>}
+      <p className="signup-fine">
+        Free reminders for {stateName} voting deadlines. By adding your number you
+        agree to receive voting-deadline texts — message/data rates may apply, reply
+        STOP to cancel. We never sell your info.
+      </p>
+    </form>
+  );
+}
+
 /* --------------------------- MAIN COMPONENT ------------------------------ */
 export default function SouthernVote() {
   const [active, setActive] = useState("GA");
@@ -1826,25 +1911,18 @@ export default function SouthernVote() {
         )}
       </main>
 
-      <section className="cta" aria-label="Stay election-ready">
+      <section className="cta" aria-label="Free voting reminders">
         <div className="cta-inner">
           <div className="cta-text">
             <h3>Never miss a deadline</h3>
             <p>
-              Sign up with TurboVote for free email &amp; text reminders before
-              every registration, absentee, and Election Day cutoff in your state.
+              Sign up and Southern Vote will email or text you before every
+              registration, absentee, and Election Day cutoff in {st.name}.
             </p>
+            <ReminderSignup stateName={st.name} />
           </div>
-          <div className="cta-actions">
-            <a
-              className="cta-btn cta-btn--primary"
-              href={TURBOVOTE_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Get election reminders ↗
-            </a>
-            {DONATE_URL && (
+          {DONATE_URL && (
+            <div className="cta-actions">
               <a
                 className="cta-btn cta-btn--ghost"
                 href={DONATE_URL}
@@ -1853,8 +1931,8 @@ export default function SouthernVote() {
               >
                 Donate ♥
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -2109,13 +2187,14 @@ const CSS = `
 .contact-note{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);}
 .contact-line{margin:2px 0;font-size:14px;color:var(--ink);}
 
-/* reminder + donate call-to-action */
+/* reminder sign-up + donate call-to-action */
 .cta{margin:36px 20px 0;}
 .cta-inner{
-  display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;
+  display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-content:space-between;
   background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--star);
   padding:18px 20px;
 }
+.cta-text{flex:1 1 340px;}
 .cta-text h3{
   font-family:"Georgia","Times New Roman",serif;font-size:18px;color:var(--ink);
   margin:0 0 4px;letter-spacing:0.01em;
@@ -2129,8 +2208,25 @@ const CSS = `
 }
 .cta-btn--primary{background:var(--star);color:#fff;}
 .cta-btn--primary:hover{background:#163a7a;border-color:#163a7a;}
+.cta-btn--primary:disabled{opacity:0.55;cursor:default;}
 .cta-btn--ghost{background:none;color:var(--star);}
 .cta-btn--ghost:hover{background:var(--star);color:#fff;}
+
+/* sign-up form */
+.signup{margin-top:12px;}
+.signup-fields{display:flex;gap:8px;flex-wrap:wrap;}
+.signup-input{
+  flex:1 1 170px;min-width:0;font-size:14px;padding:11px 12px;
+  border:1.5px solid var(--rule);background:#fff;color:var(--ink);
+  font-family:"Georgia",serif;
+}
+.signup-input:focus{outline:2px solid var(--star);outline-offset:0;border-color:var(--star);}
+.signup-note{font-size:12px;color:var(--brass);font-weight:600;margin:8px 0 0;}
+.signup-fine{font-size:11px;color:var(--ink-soft);line-height:1.5;margin:8px 0 0;max-width:62ch;}
+.signup-done{
+  font-size:14px;color:var(--ink);font-weight:600;margin:12px 0 0;
+  background:#fff;border:1.5px solid var(--star);padding:12px 14px;
+}
 
 /* footer */
 .foot{margin:40px 20px 0;padding-top:16px;border-top:2px solid var(--ink);}
