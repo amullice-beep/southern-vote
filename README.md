@@ -81,10 +81,25 @@ The form posts JSON `{ email, phone, state }` plus a spam honeypot. Formspree is
 used because its endpoint is safe to expose in client-side code — never put a
 Mailchimp/Twilio API key in the app.
 
-**Sending the reminders:** Formspree collects sign-ups; to actually send the
-emails, export/forward them to a mailing tool (Buttondown, Mailchimp) and send a
-short reminder before each deadline. **Text (SMS)** reminders need a paid sender
-(Twilio) plus a small serverless function + scheduler — not included here.
+### Sending the reminder emails (Buttondown)
+
+Formspree only *collects* sign-ups. To actually send reminder emails, the form
+also subscribes each address into a [Buttondown](https://buttondown.com)
+newsletter (when configured), which is where you write and send the reminders.
+
+1. Create a free Buttondown account (its free tier covers a small list).
+2. Find your username — your newsletter lives at `buttondown.com/<username>`.
+3. Put it in `BUTTONDOWN_USERNAME` near the top of `src/SouthernVote.jsx`, then
+   `npm run build` and redeploy.
+
+Now each sign-up is subscribed into Buttondown **tagged by state** (e.g.
+`Georgia`), so before a deadline you can send a reminder to just that state's
+voters from the Buttondown dashboard. (Formspree still keeps the full record,
+including phone numbers, for future SMS.) Buttondown's embed endpoint is
+client-safe; never put a Buttondown *API key* in the app.
+
+**Text (SMS)** reminders still need a paid sender (Twilio) plus a small
+serverless function + scheduler — not included here.
 
 ## Project layout
 

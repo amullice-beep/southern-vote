@@ -264,6 +264,14 @@ const DATA_LAST_VERIFIED = "June 2026";
 // Left empty, the form shows a "sign-ups opening soon" note and won't submit.
 const REMINDER_ENDPOINT = "https://formspree.io/f/mqeoonob";
 
+// Buttondown newsletter username — lets you actually SEND the reminder emails.
+// Sign-ups are subscribed into your Buttondown list (tagged by state, so you
+// can email just one state's voters), and you write/send reminders from
+// buttondown.com. Find this in your Buttondown settings (your newsletter URL is
+// buttondown.com/<username>). Left empty, Buttondown subscription is skipped and
+// only the Formspree record above is kept.
+const BUTTONDOWN_USERNAME = "";
+
 // Optional donation link. Paste your donation page (ActBlue, Donorbox, PayPal,
 // GitHub Sponsors, etc.) here and a "Donate" button appears in the sign-up card.
 // Left empty, the Donate button is hidden.
@@ -1667,7 +1675,23 @@ function ReminderSignup({ stateName }) {
   const [hp, setHp] = useState(""); // honeypot — bots fill this, humans never see it
   const [status, setStatus] = useState("idle"); // idle|submitting|done|error
   const [err, setErr] = useState("");
-  const configured = REMINDER_ENDPOINT.length > 0;
+  const configured = REMINDER_ENDPOINT.length > 0 || BUTTONDOWN_USERNAME.length > 0;
+
+  // Subscribe the email into Buttondown so it can be sent reminder campaigns.
+  // Buttondown's embed endpoint doesn't return CORS headers, so this is a
+  // fire-and-forget no-cors POST; Buttondown sends its own opt-in confirmation.
+  function subscribeButtondown() {
+    if (!BUTTONDOWN_USERNAME || !email.trim()) return;
+    const fd = new FormData();
+    fd.append("email", email.trim());
+    fd.append("embed", "1");
+    fd.append("tag", stateName); // tag by state for per-state reminder sends
+    fetch(`https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`, {
+      method: "POST",
+      mode: "no-cors",
+      body: fd,
+    }).catch(() => {});
+  }
 
   async function submit(e) {
     e.preventDefault();
@@ -1679,6 +1703,15 @@ function ReminderSignup({ stateName }) {
     }
     setStatus("submitting");
     setErr("");
+
+    subscribeButtondown();
+
+    // Formspree keeps the full record (incl. phone) and gives real success/error.
+    // If only Buttondown is configured, the subscribe above is enough.
+    if (!REMINDER_ENDPOINT) {
+      setStatus("done");
+      return;
+    }
     try {
       const res = await fetch(REMINDER_ENDPOINT, {
         method: "POST",
