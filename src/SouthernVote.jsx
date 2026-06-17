@@ -270,7 +270,7 @@ const REMINDER_ENDPOINT = "https://formspree.io/f/mqeoonob";
 // buttondown.com. Find this in your Buttondown settings (your newsletter URL is
 // buttondown.com/<username>). Left empty, Buttondown subscription is skipped and
 // only the Formspree record above is kept.
-const BUTTONDOWN_USERNAME = "";
+const BUTTONDOWN_USERNAME = "alicialm";
 
 // Optional donation link. Paste your donation page (ActBlue, Donorbox, PayPal,
 // GitHub Sponsors, etc.) here and a "Donate" button appears in the sign-up card.
