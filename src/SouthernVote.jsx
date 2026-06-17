@@ -270,6 +270,51 @@ function haversineMiles(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// Geocode a free-text address, scoped to the state the user is viewing. Place
+// names are wildly ambiguous (there are ~10 "Selma"s and "Springfield"s in the
+// US), so we append the state and prefer a result that actually lands in it —
+// otherwise "123 Main St, Selma" in the Alabama tab can resolve to S. Carolina.
+async function geocodeInState(query, stateCode) {
+  const stateName = (STATES[stateCode] && STATES[stateCode].name) || "";
+
+  const fetchHits = async (q) => {
+    const url =
+      "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=us&q=" +
+      encodeURIComponent(q);
+    const res = await fetch(url, { headers: { "Accept-Language": "en" } });
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  };
+  const pick = (hits) => {
+    if (!hits.length) return null;
+    // Prefer a result that actually lands in the state the user is viewing.
+    const best = hits.find((d) => d.address && d.address.state === stateName) || hits[0];
+    return { lat: parseFloat(best.lat), lon: parseFloat(best.lon), label: best.display_name };
+  };
+
+  // Pass 1: append the state to disambiguate (there are ~10 "Selma"s in the US).
+  if (stateName && !new RegExp(stateName, "i").test(query)) {
+    const scoped = pick(await fetchHits(`${query}, ${stateName}`));
+    if (scoped) return scoped;
+  }
+  // Pass 2: fall back to the raw query (in case the state appended over-
+  // constrained it to zero hits), still preferring an in-state match.
+  return pick(await fetchHits(query));
+}
+
+// Reverse-geocode a coordinate to a human-readable label (best-effort).
+async function reverseLabel(lat, lon) {
+  try {
+    const url =
+      `https://nominatim.openstreetmap.org/reverse?format=json&zoom=14&lat=${lat}&lon=${lon}`;
+    const res = await fetch(url, { headers: { "Accept-Language": "en" } });
+    const d = await res.json();
+    return (d && d.display_name) || "Your current location";
+  } catch {
+    return "Your current location";
+  }
+}
+
 function useCountdown(targetISO) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -343,26 +388,47 @@ function LocationPanel({ st }) {
     setErrMsg("");
     setGeo(null);
     try {
-      const url =
-        "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=" +
-        encodeURIComponent(addr);
-      const res = await fetch(url, { headers: { "Accept-Language": "en" } });
-      const data = await res.json();
-      if (!data || !data.length) {
+      const g = await geocodeInState(addr, st);
+      if (!g) {
         setStatus("error");
-        setErrMsg("Couldn't find that address. Add a city and ZIP and try again.");
+        setErrMsg(`Couldn't find that address in ${STATES[st].name}. Add a city and ZIP and try again.`);
         return;
       }
-      setGeo({
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-        label: data[0].display_name,
-      });
+      setGeo(g);
       setStatus("done");
     } catch (e) {
       setStatus("error");
       setErrMsg("Address lookup is unavailable right now. You can still use the official links below.");
     }
+  }
+
+  // Use the device's GPS/location instead of typing an address.
+  function useMyLocation() {
+    if (!("geolocation" in navigator)) {
+      setStatus("error");
+      setErrMsg("This browser can't share your location. Type your address instead.");
+      return;
+    }
+    setStatus("loading");
+    setErrMsg("");
+    setGeo(null);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const label = await reverseLabel(latitude, longitude);
+        setGeo({ lat: latitude, lon: longitude, label });
+        setStatus("done");
+      },
+      (err) => {
+        setStatus("error");
+        setErrMsg(
+          err && err.code === 1
+            ? "Location permission was denied. Type your address instead."
+            : "Couldn't get your location. Type your address instead."
+        );
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
   }
 
   const nearestDmv = useMemo(() => {
@@ -388,6 +454,15 @@ function LocationPanel({ st }) {
         </button>
       </div>
 
+      <button
+        className="btn-geo"
+        onClick={useMyLocation}
+        disabled={status === "loading"}
+        type="button"
+      >
+        <span aria-hidden="true">◎</span> Use my current location
+      </button>
+
       {status === "error" && <p className="msg msg-err">{errMsg}</p>}
       {geo && (
         <p className="msg msg-ok">
@@ -411,7 +486,7 @@ function LocationPanel({ st }) {
           Look up my precinct on the {STATES[st].name} portal ↗
         </a>
         {geo && (
-          <PrecinctDistance origin={geo} />
+          <PrecinctDistance origin={geo} st={st} />
         )}
       </div>
 
@@ -454,7 +529,7 @@ function LocationPanel({ st }) {
   );
 }
 
-function PrecinctDistance({ origin }) {
+function PrecinctDistance({ origin, st }) {
   const [pAddr, setPAddr] = useState("");
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -464,14 +539,10 @@ function PrecinctDistance({ origin }) {
     if (!pAddr.trim()) return;
     setBusy(true); setErr(""); setResult(null);
     try {
-      const url =
-        "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=" +
-        encodeURIComponent(pAddr);
-      const res = await fetch(url, { headers: { "Accept-Language": "en" } });
-      const data = await res.json();
-      if (!data || !data.length) { setErr("Couldn't find that polling place address."); setBusy(false); return; }
-      const mi = haversineMiles(origin.lat, origin.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
-      setResult({ mi, label: data[0].display_name });
+      const g = await geocodeInState(pAddr, st);
+      if (!g) { setErr("Couldn't find that polling place address."); setBusy(false); return; }
+      const mi = haversineMiles(origin.lat, origin.lon, g.lat, g.lon);
+      setResult({ mi, label: g.label });
     } catch {
       setErr("Lookup unavailable right now.");
     }
@@ -910,6 +981,13 @@ const CSS = `
 .btn:hover{background:#641f1f;}
 .btn:disabled{opacity:0.6;cursor:default;}
 .btn--sm{padding:9px 16px;font-size:13px;}
+.btn-geo{
+  appearance:none;cursor:pointer;margin-top:8px;background:none;border:none;padding:0;
+  color:var(--star);font-family:"Georgia",serif;font-weight:600;font-size:13px;
+  letter-spacing:0.02em;text-decoration:underline;text-underline-offset:2px;
+}
+.btn-geo:hover{color:var(--ink);}
+.btn-geo:disabled{opacity:0.5;cursor:default;text-decoration:none;}
 .msg{font-size:13px;margin:0;}
 .msg-err{color:var(--oxblood);font-weight:600;}
 .msg-ok{color:var(--ink-soft);}
