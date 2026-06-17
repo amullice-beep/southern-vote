@@ -377,6 +377,7 @@ function LocationPanel({ st }) {
   const [geo, setGeo] = useState(null);     // {lat, lon, label}
   const [status, setStatus] = useState("idle"); // idle|loading|done|error
   const [errMsg, setErrMsg] = useState("");
+  const [locating, setLocating] = useState(false); // GPS lookup in progress
 
   // sample of statewide DMV/driver-license offices with coordinates, so the
   // distance feature is fully functional. These are real office locations.
@@ -412,15 +413,18 @@ function LocationPanel({ st }) {
     setStatus("loading");
     setErrMsg("");
     setGeo(null);
+    setLocating(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
         const label = await reverseLabel(latitude, longitude);
         setGeo({ lat: latitude, lon: longitude, label });
         setStatus("done");
+        setLocating(false);
       },
       (err) => {
         setStatus("error");
+        setLocating(false);
         setErrMsg(
           err && err.code === 1
             ? "Location permission was denied. Type your address instead."
@@ -460,7 +464,11 @@ function LocationPanel({ st }) {
         disabled={status === "loading"}
         type="button"
       >
-        <span aria-hidden="true">◎</span> Use my current location
+        {locating ? (
+          <><span className="geo-spinner" aria-hidden="true" /> Locating…</>
+        ) : (
+          <><span aria-hidden="true">◎</span> Use my current location</>
+        )}
       </button>
 
       {status === "error" && <p className="msg msg-err">{errMsg}</p>}
@@ -988,6 +996,13 @@ const CSS = `
 }
 .btn-geo:hover{color:var(--ink);}
 .btn-geo:disabled{opacity:0.5;cursor:default;text-decoration:none;}
+.geo-spinner{
+  display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:1px;
+  border:2px solid rgba(30,79,163,0.3);border-top-color:var(--star);border-radius:50%;
+  animation:geo-spin .7s linear infinite;
+}
+@keyframes geo-spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.geo-spinner{animation:none;}}
 .msg{font-size:13px;margin:0;}
 .msg-err{color:var(--oxblood);font-weight:600;}
 .msg-ok{color:var(--ink-soft);}
