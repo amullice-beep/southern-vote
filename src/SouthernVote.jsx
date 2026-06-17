@@ -517,7 +517,7 @@ function LocationPanel({ st }) {
                 <div className="office-main">
                   <span className="office-name">{o.name}</span>
                   <span className="office-addr">{o.addr}</span>
-                  <span className="office-hours">{o.hours}</span>
+                  {o.hours && <span className="office-hours">{o.hours}</span>}
                 </div>
                 <span className="office-mi">{o.mi.toFixed(1)}<small>mi</small></span>
               </li>
@@ -583,16 +583,80 @@ function PrecinctDistance({ origin, st }) {
   );
 }
 
-/* A small, real set of driver-license / DMV office coordinates per state so the
-   distance feature works end-to-end. Not exhaustive — the official locator
-   link covers the full list and live hours. */
+/* Driver-license / DMV office coordinates per state for the distance feature.
+   GA is the complete official DDS center list (geocoded; ~20 coords are
+   city-level approximations where the street address didn't geocode). Other
+   states are still a major-office sample pending the same treatment. The
+   official locator link always governs for exact addresses and live hours. */
 const DMV_OFFICES = {
   GA: [
-    { name: "DDS — Atlanta (Downtown)", addr: "8 Park Pl SE, Atlanta, GA 30303", hours: "Tue–Fri 7:30a–6:30p", lat: 33.7501, lon: -84.3877 },
-    { name: "DDS — Savannah (Chatham)", addr: "1455 Benton Blvd, Pooler, GA 31322", hours: "Tue–Sat 7:30a–6:30p", lat: 32.1149, lon: -81.2496 },
-    { name: "DDS — Augusta", addr: "3117 Washington Rd, Augusta, GA 30907", hours: "Tue–Sat 7:30a–6:30p", lat: 33.5021, lon: -82.0738 },
-    { name: "DDS — Macon", addr: "4795 Mercer University Dr, Macon, GA 31210", hours: "Tue–Sat 7:30a–6:30p", lat: 32.8615, lon: -83.6927 },
-    { name: "DDS — Columbus", addr: "2200 Comer Ave, Columbus, GA 31904", hours: "Tue–Sat 7:30a–6:30p", lat: 32.5089, lon: -84.9847 },
+    { name: "DDS — Albany", addr: "2062 Newton Road, Albany, GA", lat: 31.55072, lon: -84.17290 },
+    { name: "DDS — Alpharetta", addr: "11575 Maxwell Rd, Alpharetta, GA", lat: 34.06305, lon: -84.30111 },
+    { name: "DDS — Americus", addr: "1601 North Martin Luther King Blvd, Americus, GA", lat: 32.08732, lon: -84.24033 },
+    { name: "DDS — Athens", addr: "1505 US Highway 29 N, Athens, GA", lat: 33.95977, lon: -83.37640 },
+    { name: "DDS — Atlanta", addr: "400 Whitehall Street SW, Atlanta, GA", lat: 33.74396, lon: -84.40298 },
+    { name: "DDS — Augusta", addr: "3423 Mike Padgett Highway, Augusta, GA", lat: 33.39825, lon: -82.00566 },
+    { name: "DDS — Bainbridge", addr: "101 Airport Road, Bainbridge, GA", lat: 30.90205, lon: -84.60222 },
+    { name: "DDS — Between", addr: "1010 Heritage Pkwy, Between, GA", lat: 33.82310, lon: -83.80873 },
+    { name: "DDS — Blairsville", addr: "37 Chase Drive, Blairsville, GA", lat: 34.87714, lon: -83.94742 },
+    { name: "DDS — Blue Ridge", addr: "211 Industrial Blvd, Blue Ridge, GA", lat: 34.85533, lon: -84.32578 },
+    { name: "DDS — Brunswick", addr: "134 Jack Hartman Blvd, Brunswick, GA", lat: 31.14995, lon: -81.49149 },
+    { name: "DDS — Calhoun", addr: "402 Belwood Road, Calhoun, GA", lat: 34.46196, lon: -84.92533 },
+    { name: "DDS — Canton", addr: "220 Brown Industrial Pkwy, Canton, GA", lat: 34.23897, lon: -84.46968 },
+    { name: "DDS — Carrollton", addr: "512 Old Newnan Road, Carrollton, GA", lat: 33.57529, lon: -85.04970 },
+    { name: "DDS — Cartersville", addr: "1304 Joe Frank Harris Pkwy, Cartersville, GA", lat: 34.20550, lon: -84.81495 },
+    { name: "DDS — Cedartown", addr: "1626 Rockmart Highway, Cedartown, GA", lat: 34.01651, lon: -85.21942 },
+    { name: "DDS — Columbus", addr: "8397 Macon Road, Midland, GA", lat: 32.53953, lon: -84.84339 },
+    { name: "DDS — Conyers", addr: "2206 Eastview Pkwy, Conyers, GA", lat: 33.66761, lon: -84.01769 },
+    { name: "DDS — Cordele", addr: "409 South Midway Road, Cordele, GA", lat: 31.96531, lon: -83.74591 },
+    { name: "DDS — Covington", addr: "8134 Geiger Street, Covington, GA", lat: 33.61075, lon: -83.87562 },
+    { name: "DDS — Cumming", addr: "400 Aquatic Circle, Cumming, GA", lat: 34.22529, lon: -84.10878 },
+    { name: "DDS — Cuthbert", addr: "608B Blakely Street, Cuthbert, GA", lat: 31.77056, lon: -84.78937 },
+    { name: "DDS — Dallas", addr: "114 Justice Center Drive, Dallas, GA", lat: 33.91969, lon: -84.85085 },
+    { name: "DDS — Dalton", addr: "235 Wagner Drive, Dalton, GA", lat: 34.76919, lon: -84.97025 },
+    { name: "DDS — Decatur", addr: "2801 Candler Road, Decatur, GA", lat: 33.75250, lon: -84.29215 },
+    { name: "DDS — Douglas", addr: "348 Thomas Frier Sr Drive, Douglas, GA", lat: 31.47375, lon: -82.85541 },
+    { name: "DDS — Dublin", addr: "620 County Farm Road, Dublin, GA", lat: 32.49593, lon: -82.92347 },
+    { name: "DDS — Elberton", addr: "45 Forest Avenue, Elberton, GA", lat: 34.11162, lon: -82.87162 },
+    { name: "DDS — Evans", addr: "4408 Evans to Locks Road, Evans, GA", lat: 33.54016, lon: -82.12800 },
+    { name: "DDS — Fayetteville", addr: "749 W Lanier Avenue, Fayetteville, GA", lat: 33.44789, lon: -84.47399 },
+    { name: "DDS — Forest Park", addr: "5036 GA Highway 85, Forest Park, GA", lat: 33.62205, lon: -84.36909 },
+    { name: "DDS — Fort Benning", addr: "6691 Marchant Avenue, Fort Benning, GA", lat: 32.39446, lon: -84.80626 },
+    { name: "DDS — Gainesville", addr: "1010 Aviation Blvd, Gainesville, GA", lat: 34.27786, lon: -83.83055 },
+    { name: "DDS — Greensboro", addr: "1180 C Weldon Smith Drive, Greensboro, GA", lat: 33.57568, lon: -83.18238 },
+    { name: "DDS — Griffin", addr: "1313 Arthur K Bolton Pkwy, Griffin, GA", lat: 33.23742, lon: -84.19616 },
+    { name: "DDS — Helena", addr: "351 8th Street, Helena, GA", lat: 32.06795, lon: -82.90070 },
+    { name: "DDS — Hinesville", addr: "2301 Airport Road, Hinesville, GA", lat: 31.78651, lon: -81.63525 },
+    { name: "DDS — Jackson", addr: "1578 Highway 16 West, Jackson, GA", lat: 33.29457, lon: -83.96602 },
+    { name: "DDS — Kennesaw", addr: "3690 Old 41 Hwy NW, Kennesaw, GA", lat: 33.99622, lon: -84.59899 },
+    { name: "DDS — Kingsland", addr: "333 South Ashley Street, Kingsland, GA", lat: 30.79214, lon: -81.68311 },
+    { name: "DDS — LaGrange", addr: "900 Dallis Street, LaGrange, GA", lat: 33.03929, lon: -85.03133 },
+    { name: "DDS — Lawrenceville", addr: "310 Hurricane Shoals Road NE, Lawrenceville, GA", lat: 33.97401, lon: -83.98088 },
+    { name: "DDS — Lithonia", addr: "8040 Rockbridge Road, Lithonia, GA", lat: 33.71233, lon: -84.10519 },
+    { name: "DDS — Locust Grove", addr: "619 Tanger Blvd, Locust Grove, GA", lat: 33.32823, lon: -84.10271 },
+    { name: "DDS — Macon", addr: "200 Cherry Street, Macon, GA", lat: 32.83427, lon: -83.62365 },
+    { name: "DDS — Marietta", addr: "1605 County Services Pkwy, Marietta, GA", lat: 33.91381, lon: -84.58147 },
+    { name: "DDS — Milledgeville", addr: "200 Carl Vinson Road, Milledgeville, GA", lat: 33.02287, lon: -83.20698 },
+    { name: "DDS — Newnan", addr: "128 Bullsboro Drive, Newnan, GA", lat: 33.38650, lon: -84.78027 },
+    { name: "DDS — Norcross", addr: "2211 Beaver Ruin Road, Norcross, GA", lat: 33.93630, lon: -84.18722 },
+    { name: "DDS — Perry", addr: "450 Larry Walker Pkwy, Perry, GA", lat: 32.44284, lon: -83.74288 },
+    { name: "DDS — Reidsville", addr: "3092 GA Highway 147, Reidsville, GA", lat: 32.08686, lon: -82.11790 },
+    { name: "DDS — Rincon", addr: "2792 Highway 21 S, Rincon, GA", lat: 32.29603, lon: -81.23539 },
+    { name: "DDS — Rock Spring", addr: "156 Pin Oak Drive, Rock Spring, GA", lat: 34.81559, lon: -85.23746 },
+    { name: "DDS — Rome", addr: "3390 Martha Berry Highway NE, Rome, GA", lat: 34.25704, lon: -85.16467 },
+    { name: "DDS — Sandersville", addr: "115 Jones Street, Sandersville, GA", lat: 32.98399, lon: -82.81204 },
+    { name: "DDS — Savannah", addr: "1117 Eisenhower Drive, Savannah, GA", lat: 32.00602, lon: -81.09904 },
+    { name: "DDS — Statesboro", addr: "19051 Highway 301 N, Statesboro, GA", lat: 32.44901, lon: -81.78329 },
+    { name: "DDS — Swainsboro", addr: "994 US Highway 1 N, Swainsboro, GA", lat: 32.59739, lon: -82.33374 },
+    { name: "DDS — Thomaston", addr: "281 Knight Trail, Thomaston, GA", lat: 32.89828, lon: -84.30067 },
+    { name: "DDS — Thomasville", addr: "4788 US 84 Bypass W, Thomasville, GA", lat: 30.83658, lon: -83.97878 },
+    { name: "DDS — Thomson", addr: "172 Bob Kirk Road, Thomson, GA", lat: 33.46632, lon: -82.50261 },
+    { name: "DDS — Tifton", addr: "3057 US Highway 41 S, Tifton, GA", lat: 31.45497, lon: -83.51083 },
+    { name: "DDS — Toccoa", addr: "62 Doyle Street, Toccoa, GA", lat: 34.57937, lon: -83.32753 },
+    { name: "DDS — Trenton", addr: "75 Case Avenue, Trenton, GA", lat: 34.87239, lon: -85.51015 },
+    { name: "DDS — Valdosta", addr: "371 Gil Harbin Industrial Blvd, Valdosta, GA", lat: 30.80588, lon: -83.26842 },
+    { name: "DDS — Warner Robins", addr: "198 Carl Vinson Pkwy, Warner Robins, GA", lat: 32.59981, lon: -83.66499 },
+    { name: "DDS — Waycross", addr: "3029 Memorial Drive, Waycross, GA", lat: 31.19851, lon: -82.32466 },
   ],
   TX: [
     { name: "DPS — Austin (N Lamar)", addr: "6121 N Lamar Blvd, Austin, TX 78752", hours: "Mon–Fri 8a–5p", lat: 30.3215, lon: -97.7155 },
