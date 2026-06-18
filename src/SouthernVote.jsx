@@ -96,7 +96,7 @@ const STATES = {
     deadlines: [
       { id: "reg", label: "Voter registration deadline", date: "2026-10-09T17:00:00-04:00" },
       { id: "early", label: "Early voting opens", date: "2026-10-15T08:00:00-04:00" },
-      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-27T17:00:00-04:00" },
+      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-20T17:00:00-04:00" },
       { id: "eday", label: "Election Day", date: "2026-11-03T19:30:00-05:00" },
     ],
   },
@@ -119,7 +119,7 @@ const STATES = {
     },
     deadlines: [
       { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-05:00" },
-      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-27T17:00:00-05:00" },
+      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-24T17:00:00-05:00" },
       { id: "early", label: "Early voting opens", date: "2026-10-14T08:00:00-05:00" },
       { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-06:00" },
     ],
@@ -144,7 +144,7 @@ const STATES = {
     deadlines: [
       { id: "reg", label: "Voter registration deadline (in person/mail)", date: "2026-10-05T16:30:00-05:00" },
       { id: "reg-online", label: "Online registration deadline", date: "2026-10-13T23:59:59-05:00" },
-      { id: "early", label: "Early voting opens", date: "2026-10-21T08:30:00-05:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-20T08:30:00-05:00" },
       { id: "eday", label: "Election Day", date: "2026-11-03T20:00:00-06:00" },
     ],
   },
