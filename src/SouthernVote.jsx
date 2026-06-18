@@ -352,10 +352,24 @@ function useCountdown(targetISO) {
   return { past, days, hours, mins, secs };
 }
 
-const fmtDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-US", {
+// Show the date as written in the state's own timezone (the offset baked into
+// the ISO string), NOT the viewer's. Otherwise a 23:59 deadline rolls to the
+// next day for anyone east of that zone. We read the wall-clock Y/M/D off the
+// string and format in UTC so the calendar date can't drift. (The countdown
+// clock still uses the true instant, so it stays accurate to the deadline.)
+const fmtDate = (iso) => {
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (!m) {
+    return new Date(iso).toLocaleDateString("en-US", {
+      weekday: "short", month: "short", day: "numeric", year: "numeric",
+    });
+  }
+  const dt = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]));
+  return dt.toLocaleDateString("en-US", {
     weekday: "short", month: "short", day: "numeric", year: "numeric",
+    timeZone: "UTC",
   });
+};
 
 /* ----------------------------- SUB-COMPONENTS ---------------------------- */
 
