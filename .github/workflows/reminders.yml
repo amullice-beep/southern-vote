@@ -1,0 +1,40 @@
+name: Send deadline reminders
+
+# Runs once a day and emails each state's subscribers when one of their
+# deadlines is a configured number of days away (default 14, 7, and 1 day out).
+# Sending goes through Buttondown, scoped to each state's tag.
+
+on:
+  schedule:
+    # 13:00 UTC ≈ 8–9am US Eastern. Cron is UTC; GitHub may delay a few minutes.
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      send:
+        description: "Set to 1 to actually send (leave empty for a dry run)"
+        required: false
+        default: ""
+      lead_days:
+        description: "Comma list of days-before to fire (default 14,7,1)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Send reminders
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          # Scheduled runs always send. Manual runs send only if you pass send=1.
+          SEND: ${{ github.event_name == 'schedule' && '1' || github.event.inputs.send }}
+          REMINDER_LEAD_DAYS: ${{ github.event.inputs.lead_days }}
+          APP_URL: "https://amullice-beep.github.io/southern-vote/"
+        run: node scripts/send-reminders.js

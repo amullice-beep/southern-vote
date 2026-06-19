@@ -1,0 +1,234 @@
+/* =========================================================================
+   SOUTHERN VOTE — shared state + deadline data.
+
+   This is the single source of truth for the nine states, their deadlines,
+   and their official links. Both the app (src/SouthernVote.jsx) and the
+   automated reminder sender (scripts/send-reminders.js) import from here, so
+   the reminder emails always match what the app shows. Pure data — no React,
+   no DOM — so it runs in the browser (via Vite) and in plain Node.
+
+   Deadlines verified for Georgia (Nov 3, 2026 General). Other states use the
+   shared federal General Election Day (Nov 3, 2026) with state-specific
+   windows where confirmed; each carries a link to the authoritative SOS page
+   so the user can confirm the live value.
+   ========================================================================= */
+
+export const ELECTION_DAY = "2026-11-03T19:00:00-05:00"; // 7pm ET close (GA)
+
+export const STATES = {
+  GA: {
+    name: "Georgia",
+    sos: "https://georgia.gov/georgia-general-election-2026",
+    mvp: "https://mvp.sos.ga.gov/s/",
+    absenteeUrl: "https://georgia.gov/vote-absentee-ballot",
+    absentee: "No-excuse. Any registered Georgia voter may request an absentee ballot.",
+    dmvName: "Georgia DDS (Driver Services)",
+    dmvLocator: "https://dds.georgia.gov/locations",
+    officialsLookup: "https://mvp.sos.ga.gov/s/",
+    pollHours: "7:00 AM – 7:00 PM ET",
+    redistricting: {
+      status: "ineffect",
+      label: "Current map in effect",
+      note: "Gov. Kemp ruled out a pre-midterm redraw, so Georgia uses its 2023 court-ordered map for 2026. A new map is expected before 2028 in light of Louisiana v. Callais.",
+      passed: "Dec 2023 (court-ordered revision); in use for 2026",
+      mapUrl: "https://www.legis.ga.gov/joint-office/reapportionment",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-04:00" },
+      { id: "abs-open", label: "Absentee request window opens", date: "2026-08-17T08:00:00-04:00" },
+      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-23T17:00:00-04:00" },
+      { id: "early", label: "Early (advance) voting opens", date: "2026-10-13T08:00:00-04:00" },
+      { id: "eday", label: "Election Day", date: ELECTION_DAY },
+    ],
+  },
+  TX: {
+    name: "Texas",
+    sos: "https://www.votetexas.gov/",
+    mvp: "https://teamrv-mvp.sos.texas.gov/MVP/mvp.do",
+    absenteeUrl: "https://www.sos.state.tx.us/elections/voter/reqabbm.shtml",
+    absentee: "Excuse required. Eligible if 65+, disabled, out of county on Election Day & early voting, confined in jail, or expecting to give birth.",
+    dmvName: "Texas DPS Driver License",
+    dmvLocator: "https://apps.dps.texas.gov/DPSWebsite/DLOfficeLocator/",
+    officialsLookup: "https://www.sos.state.tx.us/elections/voter/county-clerks-and-elections-administrators.shtml",
+    pollHours: "7:00 AM – 7:00 PM CT",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "Mid-decade map enacted summer 2025 at the urging of the President; engineered to add ~5 Republican-leaning seats. Upheld for use in 2026 by the U.S. Supreme Court.",
+      passed: "Aug 2025 (enacted); SCOTUS allowed use for 2026",
+      mapUrl: "https://redistricting.capitol.texas.gov/",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-05:00" },
+      { id: "abs-close", label: "Last day to apply for ballot by mail", date: "2026-10-23T17:00:00-05:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-19T07:00:00-05:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-06:00" },
+    ],
+  },
+  NC: {
+    name: "North Carolina",
+    sos: "https://www.ncsbe.gov/",
+    mvp: "https://vt.ncsbe.gov/RegLkup/",
+    absenteeUrl: "https://www.ncsbe.gov/voting/vote-mail",
+    absentee: "No-excuse. Any registered NC voter may request a mail-in absentee ballot.",
+    dmvName: "NC Division of Motor Vehicles",
+    dmvLocator: "https://www.ncdot.gov/dmv/offices-services/Pages/default.aspx",
+    officialsLookup: "https://www.ncsbe.gov/about-elections/county-boards-elections",
+    pollHours: "6:30 AM – 7:30 PM ET",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "New congressional map adding a Republican-leaning seat; a three-judge panel allowed it to be used in the 2026 elections.",
+      passed: "2025 (allowed for 2026 by court panel)",
+      mapUrl: "https://www.ncleg.gov/Redistricting",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-09T17:00:00-04:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-15T08:00:00-04:00" },
+      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-20T17:00:00-04:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:30:00-05:00" },
+    ],
+  },
+  TN: {
+    name: "Tennessee",
+    sos: "https://sos.tn.gov/elections",
+    mvp: "https://tnmap.tn.gov/voterlookup/",
+    absenteeUrl: "https://sos.tn.gov/products/elections/absentee-voting",
+    absentee: "Excuse required. Eligible reasons include being 60+, hospitalized, out of county during voting, or a student/voter away from the county.",
+    dmvName: "Tennessee Driver Services",
+    dmvLocator: "https://www.tn.gov/safety/driver-services/locations.html",
+    officialsLookup: "https://sos.tn.gov/elections",
+    pollHours: "Varies by county (polls open ≥10 hours)",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "Gov. Lee signed new House district lines in May 2026 eliminating the state's lone Democrat-held congressional seat.",
+      passed: "May 2026 (signed into law)",
+      mapUrl: "https://www.capitol.tn.gov/joint/staff/redistricting.html",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-05:00" },
+      { id: "abs-close", label: "Last day to request absentee ballot", date: "2026-10-24T17:00:00-05:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-14T08:00:00-05:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-06:00" },
+    ],
+  },
+  LA: {
+    name: "Louisiana",
+    sos: "https://www.sos.la.gov/ElectionsAndVoting/",
+    mvp: "https://voterportal.sos.la.gov/",
+    absenteeUrl: "https://www.sos.la.gov/ElectionsAndVoting/Vote/VoteByMail/Pages/default.aspx",
+    absentee: "Excuse required for most. No-excuse mail voting available to voters 65+ and several other categories.",
+    dmvName: "Louisiana OMV",
+    dmvLocator: "https://www.expresslane.org/",
+    officialsLookup: "https://www.sos.la.gov/ElectionsAndVoting/Pages/default.aspx",
+    pollHours: "7:00 AM – 8:00 PM CT",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "After the U.S. Supreme Court struck down Louisiana's two-majority-Black-district map in Louisiana v. Callais (April 29, 2026), Gov. Landry signed SB 121 dismantling the second majority-Black district. The new 5R-1D map — one majority-Black seat anchored in New Orleans — took effect immediately for the 2026 elections.",
+      passed: "May 2026 (SB 121, in effect for 2026)",
+      mapUrl: "https://redist.legis.la.gov/",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline (in person/mail)", date: "2026-10-05T16:30:00-05:00" },
+      { id: "reg-online", label: "Online registration deadline", date: "2026-10-13T23:59:59-05:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-20T08:30:00-05:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T20:00:00-06:00" },
+    ],
+  },
+  AL: {
+    name: "Alabama",
+    sos: "https://www.sos.alabama.gov/alabama-votes",
+    mvp: "https://myinfo.alabamavotes.gov/voterview",
+    absenteeUrl: "https://www.sos.alabama.gov/alabama-votes/voter/absentee-voting",
+    absentee: "Excuse required. Eligible reasons include being out of county, illness/disability, work shifts of 10+ hours, or being a caregiver.",
+    dmvName: "Alabama Law Enforcement Agency (ALEA) Driver License",
+    dmvLocator: "https://www.alea.gov/dps/driver-license/driver-license-offices",
+    officialsLookup: "https://www.sos.alabama.gov/alabama-votes/board-of-registrars-all-counties",
+    pollHours: "7:00 AM – 7:00 PM CT",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "In June 2026 the U.S. Supreme Court let Alabama use its 2023 congressional map — one majority-Black district of seven — reversing a lower-court block in light of Louisiana v. Callais. The map is in effect for 2026; the primary was rescheduled to Aug 11, 2026.",
+      passed: "2023 map; allowed by SCOTUS June 2026",
+      mapUrl: "https://alison.legislature.state.al.us/view-redistricting-maps",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-19T23:59:59-05:00" },
+      { id: "abs-close", label: "Last day to apply for absentee ballot", date: "2026-10-29T17:00:00-05:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-06:00" },
+    ],
+  },
+  SC: {
+    name: "South Carolina",
+    sos: "https://scvotes.gov/",
+    mvp: "https://vrems.scvotes.sc.gov/Voter/Login?PageMode=PollingPlace",
+    absenteeUrl: "https://scvotes.gov/voters/absentee-voting/",
+    absentee: "Excuse required for absentee-by-mail. In-person early voting is available to all with no excuse.",
+    dmvName: "South Carolina DMV",
+    dmvLocator: "https://www.scdmvonline.com/Locations",
+    officialsLookup: "https://scvotes.gov/voters/county-voter-registration-election-offices/",
+    pollHours: "7:00 AM – 7:00 PM ET",
+    redistricting: {
+      status: "attempted",
+      label: "Redraw attempted, not enacted",
+      note: "A Trump-backed push to dismantle Rep. Clyburn's district after the Callais ruling failed in the GOP-led state Senate. No new map was enacted; the existing map remains in use for 2026.",
+      passed: "Rejected in Senate (existing map in use)",
+      mapUrl: "https://redistricting.scsenate.gov/",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline (by mail)", date: "2026-10-04T23:59:59-04:00" },
+      { id: "early", label: "Early voting opens", date: "2026-10-19T08:30:00-04:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-05:00" },
+    ],
+  },
+  MS: {
+    name: "Mississippi",
+    sos: "https://www.sos.ms.gov/elections-voting",
+    mvp: "https://www.msegov.com/sos/voter_registration/amiregistered/Search",
+    absenteeUrl: "https://www.sos.ms.gov/elections-voting/absentee-voting",
+    absentee: "Excuse required. Eligible reasons include being 65+, temporarily away, disabled, or a student/voter away from home.",
+    dmvName: "Mississippi DPS Driver Service Bureau",
+    dmvLocator: "https://www.driverservicebureau.dps.ms.gov/",
+    officialsLookup: "https://www.sos.ms.gov/elections-voting/county-election-officials",
+    pollHours: "7:00 AM – 7:00 PM CT",
+    redistricting: {
+      status: "ineffect",
+      label: "Current map in effect",
+      note: "Mississippi uses its existing congressional map for 2026 — no new map was enacted. (Gov. Reeves canceled a May 2026 special session, which concerned judicial districts.) A Callais-driven congressional redraw is under study for a later cycle.",
+      passed: "Existing map in use for 2026",
+      mapUrl: "https://www.sos.ms.gov/elections-voting/redistricting",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-05:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-06:00" },
+    ],
+  },
+  FL: {
+    name: "Florida",
+    sos: "https://dos.fl.gov/elections/",
+    mvp: "https://registration.elections.myflorida.com/CheckVoterStatus",
+    absenteeUrl: "https://dos.fl.gov/elections/for-voters/voting/vote-by-mail/",
+    absentee: "No-excuse. Any registered Florida voter may request a vote-by-mail ballot (request must be renewed each general-election cycle).",
+    dmvName: "Florida DHSMV (FLHSMV)",
+    dmvLocator: "https://www.flhsmv.gov/locations/",
+    officialsLookup: "https://dos.elections.myflorida.com/supervisors/",
+    pollHours: "7:00 AM – 7:00 PM (local time)",
+    redistricting: {
+      status: "ineffect",
+      label: "New map in effect",
+      note: "Gov. DeSantis signed a new mid-decade congressional map on May 4, 2026, reworking 21 of 28 districts to add ~4 Republican-leaning seats (projected 24-4). The Florida Supreme Court declined to block it, so the map is in effect for 2026.",
+      passed: "May 2026 (signed); in effect for 2026",
+      mapUrl: "https://www.floridaredistricting.gov/",
+    },
+    deadlines: [
+      { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-04:00" },
+      { id: "abs-close", label: "Last day to request mail ballot", date: "2026-10-22T17:00:00-04:00" },
+      { id: "early", label: "Early voting (counties may vary)", date: "2026-10-24T08:00:00-04:00" },
+      { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-05:00" },
+    ],
+  },
+};
+
+export const STATE_ORDER = ["GA", "TX", "NC", "TN", "LA", "AL", "SC", "MS", "FL"];
