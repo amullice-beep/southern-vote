@@ -29,7 +29,7 @@ export const STATES = {
     redistricting: {
       status: "ineffect",
       label: "Current map in effect",
-      note: "Gov. Kemp ruled out a pre-midterm redraw, so Georgia uses its 2023 court-ordered map for 2026. A new map is expected before 2028 in light of Louisiana v. Callais.",
+      note: "After Louisiana v. Callais, Gov. Kemp called a special session to redraw Georgia's map, but House GOP leaders declined on June 17, 2026, saying there was too little time before the election. Georgia therefore keeps its 2023 court-ordered map for 2026; leaders did not rule out a redraw for a later cycle.",
       passed: "Dec 2023 (court-ordered revision); in use for 2026",
       mapUrl: "https://www.legis.ga.gov/joint-office/reapportionment",
     },
@@ -126,8 +126,8 @@ export const STATES = {
     redistricting: {
       status: "ineffect",
       label: "New map in effect",
-      note: "After the U.S. Supreme Court struck down Louisiana's two-majority-Black-district map in Louisiana v. Callais (April 29, 2026), Gov. Landry signed SB 121 dismantling the second majority-Black district. The new 5R-1D map — one majority-Black seat anchored in New Orleans — took effect immediately for the 2026 elections.",
-      passed: "May 2026 (SB 121, in effect for 2026)",
+      note: "After the U.S. Supreme Court struck down Louisiana's two-majority-Black-district map in Louisiana v. Callais (April 29, 2026), Gov. Landry signed SB 121 (Act 2) dismantling the second majority-Black district. The new 5R-1D map — one majority-Black seat anchored in New Orleans — is being used for 2026, but a federal three-judge panel heard a challenge on June 17–18, 2026 over whether it complies with Callais; a ruling is pending.",
+      passed: "May 2026 (SB 121 / Act 2); under federal court review",
       mapUrl: "https://redist.legis.la.gov/",
     },
     deadlines: [
