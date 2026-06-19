@@ -32,7 +32,8 @@ jobs:
           node-version: 22
       - name: Send reminders
         env:
-          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          # Sourced from the repo secret named "API" (the Buttondown key).
+          BUTTONDOWN_API_KEY: ${{ secrets.API }}
           # Scheduled runs always send. Manual runs send only if you pass send=1.
           SEND: ${{ github.event_name == 'schedule' && '1' || github.event.inputs.send }}
           REMINDER_LEAD_DAYS: ${{ github.event.inputs.lead_days }}

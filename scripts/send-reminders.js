@@ -160,12 +160,21 @@ async function createAndSend(state, deadline, days) {
   const subject = buildSubject(state, deadline, days);
   const body = buildBody(state, deadline, days);
 
+  // When a key is present we run the dedupe check even in dry-run: it's a
+  // read-only GET, so it doubles as a live validation that the key works.
+  const exists = API_KEY ? await subjectAlreadyExists(subject) : false;
+
   if (!SEND) {
-    console.log(`  DRY-RUN would send → "${subject}"`);
+    const note = !API_KEY
+      ? ""
+      : exists
+        ? " (already exists — would skip)"
+        : " (key OK)";
+    console.log(`  DRY-RUN would send → "${subject}"${note}`);
     return "dry-run";
   }
 
-  if (await subjectAlreadyExists(subject)) {
+  if (exists) {
     console.log(`  skip (already sent) → "${subject}"`);
     return "skipped";
   }
