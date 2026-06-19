@@ -1583,7 +1583,7 @@ function ReminderSignup({ stateName }) {
       <p className="signup-fine">
         Free reminders for {stateName} voting deadlines. By adding your number you
         agree to receive voting-deadline texts — message/data rates may apply, reply
-        STOP to cancel. We never sell your info.
+        STOP to cancel.
       </p>
     </form>
   );
