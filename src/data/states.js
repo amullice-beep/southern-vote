@@ -178,7 +178,7 @@ export const STATES = {
       mapUrl: "https://redistricting.scsenate.gov/",
     },
     deadlines: [
-      { id: "reg", label: "Voter registration deadline (by mail)", date: "2026-10-04T23:59:59-04:00" },
+      { id: "reg", label: "Voter registration deadline (by mail)", date: "2026-10-05T23:59:59-04:00" },
       { id: "early", label: "Early voting opens", date: "2026-10-19T08:30:00-04:00" },
       { id: "eday", label: "Election Day", date: "2026-11-03T19:00:00-05:00" },
     ],
