@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "apple-touch-icon.png"],
+      includeAssets: ["favicon.png", "apple-touch-icon.png", "icon-master.png"],
       manifest: {
         name: "Southern Vote — 2026 Election Record Book",
         short_name: "Southern Vote",
