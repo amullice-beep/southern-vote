@@ -134,7 +134,8 @@ export const STATES = {
       { id: "reg", label: "Voter registration deadline (in person/mail)", date: "2026-10-05T16:30:00-05:00" },
       { id: "reg-online", label: "Online registration deadline", date: "2026-10-13T23:59:59-05:00" },
       { id: "early", label: "Early voting opens", date: "2026-10-20T08:30:00-05:00" },
-      { id: "eday", label: "Election Day", date: "2026-11-03T20:00:00-06:00" },
+      { id: "eday", label: "Election Day (general / first round)", date: "2026-11-03T20:00:00-06:00" },
+      { id: "runoff", label: "General election runoff (if no majority)", date: "2026-12-12T20:00:00-06:00" },
     ],
   },
   AL: {
