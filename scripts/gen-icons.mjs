@@ -15,6 +15,7 @@ const out = (f) => resolve(root, "public", f);
 // ~16% on each side, so its content sits safely inside the maskable safe zone.
 const sizes = [
   ["favicon.png", 64],
+  ["brand-mark.png", 96], // small in-app masthead mark
   ["apple-touch-icon.png", 180],
   ["pwa-192.png", 192],
   ["pwa-512.png", 512],

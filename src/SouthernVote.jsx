@@ -1604,7 +1604,7 @@ export default function SouthernVote() {
         <div className="masthead-rule" />
         <div className="masthead-inner">
           <div className="brand">
-            <span className="brand-mark">★</span>
+            <img className="brand-mark" src={`${import.meta.env.BASE_URL}brand-mark.png`} alt="Southern Vote logo" width="44" height="44" />
             <div>
               <h1>Southern Vote</h1>
               <p className="brand-sub">A citizen's record book for the 2026 election — nine Southern states</p>
@@ -1843,8 +1843,9 @@ const CSS = `
 }
 .brand{display:flex;align-items:center;gap:14px;}
 .brand-mark{
-  font-size:34px;color:var(--star);line-height:1;
-  transform:translateY(-2px);
+  width:44px;height:44px;display:block;flex:none;
+  border-radius:10px;border:1px solid var(--rule);
+  box-shadow:0 1px 3px rgba(28,34,48,0.15);
 }
 .masthead h1{
   font-family:"Georgia","Times New Roman",serif;
