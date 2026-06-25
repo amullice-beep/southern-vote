@@ -192,7 +192,7 @@ export const STATES = {
     absentee: "Excuse required. Eligible reasons include being 65+, temporarily away, disabled, or a student/voter away from home.",
     dmvName: "Mississippi DPS Driver Service Bureau",
     dmvLocator: "https://www.driverservicebureau.dps.ms.gov/",
-    officialsLookup: "https://www.sos.ms.gov/elections-voting/county-election-information",
+    officialsLookup: "https://www.sos.ms.gov/yall-vote",
     pollHours: "7:00 AM – 7:00 PM CT",
     redistricting: {
       status: "ineffect",
