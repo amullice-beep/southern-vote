@@ -49,7 +49,7 @@ export const STATES = {
     absentee: "Excuse required. Eligible if 65+, disabled, out of county on Election Day & early voting, confined in jail, or expecting to give birth.",
     dmvName: "Texas DPS Driver License",
     dmvLocator: "https://apps.dps.texas.gov/DPSWebsite/DLOfficeLocator/",
-    officialsLookup: "https://www.sos.state.tx.us/elections/voter/county-clerks-and-elections-administrators.shtml",
+    officialsLookup: "https://www.sos.state.tx.us/elections/voter/votregduties.shtml",
     pollHours: "7:00 AM – 7:00 PM CT",
     redistricting: {
       status: "ineffect",
@@ -192,7 +192,7 @@ export const STATES = {
     absentee: "Excuse required. Eligible reasons include being 65+, temporarily away, disabled, or a student/voter away from home.",
     dmvName: "Mississippi DPS Driver Service Bureau",
     dmvLocator: "https://www.driverservicebureau.dps.ms.gov/",
-    officialsLookup: "https://www.sos.ms.gov/elections-voting/county-election-officials",
+    officialsLookup: "https://www.sos.ms.gov/elections-voting/county-election-information",
     pollHours: "7:00 AM – 7:00 PM CT",
     redistricting: {
       status: "ineffect",
