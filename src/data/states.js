@@ -188,7 +188,7 @@ export const STATES = {
     name: "Mississippi",
     sos: "https://www.sos.ms.gov/elections-voting",
     mvp: "https://www.msegov.com/sos/voter_registration/amiregistered/Search",
-    absenteeUrl: "https://www.sos.ms.gov/elections-voting/absentee-voting",
+    absenteeUrl: "https://www.sos.ms.gov/yall-vote/absentee-voting-information",
     absentee: "Excuse required. Eligible reasons include being 65+, temporarily away, disabled, or a student/voter away from home.",
     dmvName: "Mississippi DPS Driver Service Bureau",
     dmvLocator: "https://www.driverservicebureau.dps.ms.gov/",
@@ -199,7 +199,7 @@ export const STATES = {
       label: "Current map in effect",
       note: "Mississippi uses its existing congressional map for 2026 — no new map was enacted. (Gov. Reeves canceled a May 2026 special session, which concerned judicial districts.) A Callais-driven congressional redraw is under study for a later cycle.",
       passed: "Existing map in use for 2026",
-      mapUrl: "https://www.sos.ms.gov/elections-voting/redistricting",
+      mapUrl: "https://www.sos.ms.gov/elections-voting",
     },
     deadlines: [
       { id: "reg", label: "Voter registration deadline", date: "2026-10-05T23:59:59-05:00" },
